@@ -1,0 +1,64 @@
+def process_data(data, operation, dict_mode='values'):
+    try:
+        if isinstance(data, list):
+            return [operation(x) for x in data]
+        elif isinstance(data, tuple):
+            return tuple(operation(x) for x in data)
+        elif isinstance(data, dict):
+            if dict_mode == 'keys':
+                return {operation(k): v for k, v in data.items()}
+            elif dict_mode == 'values':
+                return {k: operation(v) for k, v in data.items()}
+            elif dict_mode == 'items':
+                return {operation(k): operation(v) for k, v in data.items()}
+            else:
+                return "Невідомий режим обробки словника."
+        else:
+            return "Непідтримуваний тип даних."
+    except Exception as e:
+        return f"Помилка під час обробки: {e}"
+
+def filter_data(data, predicate):
+    try:
+        if isinstance(data, list):
+            return [x for x in data if predicate(x)]
+        elif isinstance(data, tuple):
+            return tuple(x for x in data if predicate(x))
+        else:
+            return "Непідтримуваний тип колекції."
+    except Exception as e:
+        return f"Помилка фільтрації: {e}"
+
+def combine_values(*args, separator='', start=0):
+    try:
+        if not args:
+            return None
+        if isinstance(args[0], (int, float)):
+            result = start
+            for x in args:
+                if not isinstance(x, (int, float)):
+                    raise TypeError
+                result += x
+            return result
+        elif isinstance(args[0], str):
+            for x in args:
+                if not isinstance(x, str):
+                    raise TypeError
+            return separator.join(args)
+        else:
+            return "Непідтримуваний тип."
+    except Exception as e:
+        return f"Помилка об’єднання: {e}"
+
+# Приклад 1: process_data
+print(process_data([1, 2, 3], lambda x: x * 2))
+print(process_data((1, 2, 3), lambda x: x + 1))
+print(process_data({'a': 1, 'b': 2}, lambda x: x * 10))
+
+# Приклад 2: filter_data
+print(filter_data([1, 2, 3, 4], lambda x: x % 2 == 0))
+print(filter_data((1, 5, 6), lambda x: x > 3))
+
+# Приклад 3: combine_values
+print(combine_values(1, 2, 3, start=10))
+print(combine_values("a", "b", "c", separator="-"))
